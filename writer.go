@@ -15,7 +15,7 @@ func writeToFile(set *Set, host string, fileName string) error {
 	}
 	w := bufio.NewWriter(f)
 	defer f.Close()
-	_, err = w.WriteString("<?xml version=\"1.0\" encoding=\"UTF-8\"?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n")
+	_, err = w.WriteString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n")
 	if err != nil {
 		log.Fatal(err)
 	}

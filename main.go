@@ -8,8 +8,8 @@ func main() {
 	const host = "https://sechead.com"
 	crawler := NewCrawlerBuilder().
 		WithHost(host).
-		WithStartPath("/legal").
-		WithPrefix("/legal").
+		WithStartPath("/").
+		WithPrefix("/").
 		WithLogs(true).
 		Build()
 	err := crawler.crawl()
