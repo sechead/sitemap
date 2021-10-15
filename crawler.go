@@ -1,6 +1,8 @@
 package main
 
 import (
+	"errors"
+	"fmt"
 	"golang.org/x/net/html"
 	"log"
 	"net/http"
@@ -61,7 +63,7 @@ func (b *CrawlerBuilder) Build() *crawler {
 	}
 }
 
-func (c crawler) crawl() error {
+func (c crawler) crawl() {
 	*c.stack = append(*c.stack, c.startPath)
 	for len(*c.stack) > 0 {
 		n := len(*c.stack) - 1
@@ -69,10 +71,10 @@ func (c crawler) crawl() error {
 		*c.stack = (*c.stack)[:n]
 		err := c.processPage(&page)
 		if err != nil {
-			return err
+			log.Println(err.Error())
+			continue
 		}
 	}
-	return nil
 }
 
 func (c crawler) processPage(page *string) error {
@@ -126,7 +128,7 @@ func (c crawler) getPage(page *string) (*goquery.Document, error) {
 	defer res.Body.Close()
 	if res.StatusCode != 200 {
 		log.Printf("status code error for page %s: %d %s\n", *page, res.StatusCode, res.Status)
-		return nil, err
+		return nil, errors.New(fmt.Sprintf("status code error for page %s: %d %s\n", *page, res.StatusCode, res.Status))
 	}
 	// Load the HTML document
 	doc, err := goquery.NewDocumentFromReader(res.Body)

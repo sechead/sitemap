@@ -10,6 +10,18 @@ import (
 )
 
 func main() {
+	go sitemapUpdater()
+	fs := http.FileServer(http.Dir("./data"))
+	http.Handle("/", fs)
+	log.Printf("Listening on :%s\n", os.Getenv("PORT"))
+	err := http.ListenAndServe(":"+os.Getenv("PORT"), nil)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+}
+
+func sitemapUpdater() {
 	updateSitemap()
 	c := cron.New(cron.WithLogger(cron.VerbosePrintfLogger(log.Default())))
 	_, err := c.AddFunc(os.Getenv("SCHEDULE"), func() { updateSitemap() })
@@ -17,13 +29,6 @@ func main() {
 		log.Fatal(err.Error())
 	}
 	c.Start()
-	fs := http.FileServer(http.Dir("./data"))
-	http.Handle("/", fs)
-	log.Printf("Listening on :%s\n", os.Getenv("PORT"))
-	err = http.ListenAndServe(":"+os.Getenv("PORT"), nil)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
 }
 
 func updateSitemap() {
@@ -37,7 +42,7 @@ func updateSitemap() {
 		WithPrefix(os.Getenv("PREFIX")).
 		WithLogs(withLogs).
 		Build()
-	err = crawler.crawl()
+	crawler.crawl()
 	if err != nil {
 		log.Fatal(err)
 	}
