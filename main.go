@@ -16,6 +16,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
+	c.Start()
 	fs := http.FileServer(http.Dir("./data"))
 	http.Handle("/", fs)
 	log.Printf("Listening on :%s\n", os.Getenv("PORT"))
