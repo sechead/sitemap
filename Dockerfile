@@ -11,5 +11,7 @@ FROM alpine
 RUN apk --no-cache add ca-certificates
 WORKDIR /usr/bin
 COPY --from=build /go/src/bin /go/bin
+ENV PORT = 3000
+EXPOSE $PORT
 
 ENTRYPOINT /go/bin/sitemap
