@@ -19,7 +19,7 @@ func main() {
 	fs := http.FileServer(http.Dir("./data"))
 	http.Handle("/", fs)
 	log.Printf("Listening on :%s\n", os.Getenv("PORT"))
-	err = http.ListenAndServe(os.Getenv("PORT"), nil)
+	err = http.ListenAndServe(":"+os.Getenv("PORT"), nil)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
@@ -45,7 +45,15 @@ func updateSitemap() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = writeToFile(crawler.pages, os.Getenv("HOST"), "data/sitemap.xml")
+	err = writeToFile(crawler.pages, os.Getenv("HOST"), "data/sitemap_new.xml")
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = os.Remove("data/sitemap.xml")
+	if err != nil {
+		log.Println(err)
+	}
+	err = os.Rename("data/sitemap_new.xml", "data/sitemap.xml")
 	if err != nil {
 		log.Fatal(err)
 	}
