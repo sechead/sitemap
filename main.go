@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"time"
 )
 
 func main() {
@@ -41,6 +42,7 @@ func updateSitemap() {
 		WithStartPath(os.Getenv("START_PATH")).
 		WithPrefix(os.Getenv("PREFIX")).
 		WithLogs(withLogs).
+		WithTimeout(time.Second).
 		Build()
 	crawler.crawl()
 	if err != nil {

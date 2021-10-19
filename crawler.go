@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/PuerkitoBio/goquery"
 )
@@ -18,6 +19,7 @@ type crawler struct {
 	withPrefix string
 	stack      *[]string
 	withLogs   bool
+	timeout    time.Duration
 }
 
 type CrawlerBuilder struct {
@@ -26,6 +28,7 @@ type CrawlerBuilder struct {
 	pages      *Set
 	withPrefix string
 	withLogs   bool
+	timeout    time.Duration
 }
 
 func NewCrawlerBuilder() *CrawlerBuilder {
@@ -52,6 +55,11 @@ func (b *CrawlerBuilder) WithLogs(withLogs bool) *CrawlerBuilder {
 	return b
 }
 
+func (b *CrawlerBuilder) WithTimeout(timeout time.Duration) *CrawlerBuilder {
+	b.timeout = timeout
+	return b
+}
+
 func (b *CrawlerBuilder) Build() *crawler {
 	return &crawler{
 		startPath:  b.startPath,
@@ -60,12 +68,14 @@ func (b *CrawlerBuilder) Build() *crawler {
 		withPrefix: b.withPrefix,
 		stack:      &[]string{},
 		withLogs:   b.withLogs,
+		timeout:    b.timeout,
 	}
 }
 
 func (c crawler) crawl() {
 	*c.stack = append(*c.stack, c.startPath)
 	for len(*c.stack) > 0 {
+		time.Sleep(c.timeout)
 		n := len(*c.stack) - 1
 		page := (*c.stack)[n]
 		*c.stack = (*c.stack)[:n]
